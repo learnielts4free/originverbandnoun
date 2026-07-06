@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Kiểm Tra Tiếng Anh - Ms Lê Hằng English</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #8854C0;
+            --accent-color: #FDCB6E;
+            --success-color: #00D26A;
+            --danger-color: #FF4757;
+            --text-color: #2D3436;
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Quicksand', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 10px;
+            overflow-x: hidden;
+            position: relative;
+            background: linear-gradient(-45deg, #8854C0, #E84393, #00C9A7, #FDCB6E);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            color: var(--text-color);
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            opacity: 0.12;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='%23ffffff'%3E%3Cpath d='M9 25c-2 0-3 1-3 3s1 3 3 3 3-1 3-3-1-3-3-3zm36 10c-2 0-3 1-3 3s1 3 3 3 3-1 3-3-1-3-3-3zM15 8l2 5h5l-4 3 2 5-5-3-5 3 2-5-4-3h5z'/%3E%3C/g%3E%3C/svg%3E");
+            animation: patternMove 25s linear infinite;
+        }
+
+        @keyframes patternMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 300px 300px; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            z-index: 1;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid #fff;
+        }
+
+        header h5 {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+
+        .alert-box {
+            background: #FFEAA7;
+            border: 3px dashed #FF9F43;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+            box-shadow: 0 6px 0 #FF9F43;
+            line-height: 1.6;
+        }
+
+        .alert-title {
+            color: #D63031;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 900;
+        }
+
+        .quiz-card {
+            background: var(--card-bg);
+            border-radius: 22px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 0px rgba(0,0,0,0.06), 0 16px 20px rgba(0,0,0,0.04);
+            border: 3px solid #FFF;
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            line-height: 1.6;
+        }
+
+        .question-text u {
+            text-decoration: underline;
+            text-decoration-color: var(--danger-color);
+            text-decoration-thickness: 3px;
+            color: var(--danger-color);
+            font-weight: 900;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #FFF;
+            border: 3px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 14px 20px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 5px 0 #E2E8F0;
+            transition: all 0.1s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #CBD5E1;
+            background-color: #F8FAFC;
+        }
+
+        .option-btn:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #CBD5E1;
+        }
+
+        .option-btn.correct {
+            background-color: #E8FDF0 !important;
+            border-color: var(--success-color) !important;
+            color: #0E6237 !important;
+            box-shadow: 0 5px 0 var(--success-color) !important;
+        }
+
+        .option-btn.wrong {
+            background-color: #FFEBEB !important;
+            border-color: var(--danger-color) !important;
+            color: #991B1B !important;
+            box-shadow: 0 5px 0 var(--danger-color) !important;
+        }
+
+        .explanation-box {
+            margin-top: 20px;
+            background: #F8F9FA;
+            border-left: 6px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 18px;
+            display: none;
+            animation: slideDown 0.3s ease-out forwards;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation-title {
+            font-weight: 900;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+
+        .exp-section {
+            margin-bottom: 8px;
+            font-size: 0.98rem;
+            line-height: 1.6;
+        }
+
+        .shake {
+            animation: shakeAnim 0.4s ease-in-out;
+        }
+
+        @keyframes shakeAnim {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        .submit-container {
+            text-align: center;
+            margin: 40px 0 70px 0;
+        }
+
+        .btn-submit {
+            background: #FF7675;
+            color: white;
+            border: none;
+            padding: 16px 50px;
+            font-size: 1.35rem;
+            font-weight: 900;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 7px 0 #E84393;
+            transition: all 0.1s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 9px 0 #E84393;
+        }
+
+        .btn-submit:active {
+            transform: translateY(5px);
+            box-shadow: 0 2px 0 #E84393;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #FFF;
+            border-radius: 24px;
+            padding: 35px 25px;
+            max-width: 550px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            border: 4px solid var(--accent-color);
+            animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-title {
+            font-size: 1.7rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+        }
+
+        .modal-score {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--success-color);
+            margin: 10px 0;
+        }
+
+        .modal-comment {
+            font-size: 1.1rem;
+            font-weight: 700;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #444;
+        }
+
+        .btn-close-modal {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #6C5CE7;
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 99;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container">
+        <header>
+            <h5>Giáo viên tạo: Ms Lê Hằng English</h5>
+        </header>
+
+        <div class="alert-box">
+            <span class="alert-title">⚠️ LỜI NHẮC CỰC KỲ QUAN TRỌNG ⚠️</span>
+            Chỉ có đọc kỹ giải thích ngay sau mỗi câu, sau đó ghi lại từ vựng/cấu trúc mới vào vở để học thì mới thực sự giỏi lên.<br>
+            Làm cho xong mà không đọc giải thích hay đọc qua loa không ghi chép thì chỉ tốn thời gian vô ích!<br>
+            <span style="color: var(--primary-color); display:block; margin-top:5px; font-weight:900;">* Kéo tới đâu, làm tới đó! *</span>
+        </div>
+
+        <div id="quiz-wrapper"></div>
+
+        <div class="submit-container">
+            <button class="btn-submit" onclick="submitQuiz()">Nộp Bài Báo Điểm 🏆</button>
+        </div>
+    </div>
+
+    <div id="scoreModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Kết Quả Thử Thách 🌟</div>
+            <div class="modal-score" id="modalScoreText">0/0</div>
+            <div class="modal-comment" id="modalCommentText">Đang chấm điểm...</div>
+            <button class="btn-close-modal" onclick="closeModal()">Làm lại bài thi 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        // --- WEB AUDIO API ENGINE ---
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        function initAudio() { if (!audioCtx) audioCtx = new AudioCtx(); }
+        function playSound(type) {
+            try {
+                initAudio(); if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                if (type === 'correct') {
+                    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now + 0.08);
+                    gain.gain.setValueAtTime(0.25, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.35);
+                } else {
+                    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                    osc.type = 'triangle'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(80, now + 0.3);
+                    gain.gain.setValueAtTime(0.25, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.35);
+                }
+            } catch (e) {}
+        }
+
+        // --- CONFETTI SYSTEM ---
+        const canvas = document.getElementById('confetti-canvas'); const ctx = canvas.getContext('2d');
+        let confettiPieces = []; let animationFrameId = null;
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
+        function createConfetti() {
+            confettiPieces = [];
+            for (let i = 0; i < 70; i++) {
+                confettiPieces.push({
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height,
+                    r: Math.random() * 5 + 4, d: Math.random() * canvas.height,
+                    color: `hsl(${Math.random() * 360}, 100%, 65%)`, tilt: Math.random() * 10 - 5,
+                    tiltAngleIncremental: Math.random() * 0.06 + 0.02, tiltAngle: 0
+                });
+            }
+            if(animationFrameId) cancelAnimationFrame(animationFrameId); animateConfetti();
+        }
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); let active = false;
+            confettiPieces.forEach((p) => {
+                p.tiltAngle += p.tiltAngleIncremental; p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2; p.x += Math.sin(p.tiltAngle); p.tilt = Math.sin(p.tiltAngle - p.r / 2) * 4;
+                if (p.y <= canvas.height) active = true;
+                ctx.beginPath(); ctx.lineWidth = p.r; ctx.strokeStyle = p.color;
+                ctx.moveTo(p.x + p.tilt + p.r / 2, p.y); ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2); ctx.stroke();
+            });
+            if (active) animationFrameId = requestAnimationFrame(animateConfetti);
+            else ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // --- FULL DATABASE (50 QUESTIONS) ---
+        const rawQuizData = [
+    {
+        "question": "The soldier was punished for ______ to obey his commanding officer’s orders.",
+        "options": ["being refusing", "having refusing", "having refused", "being refused"],
+        "correctIndex": 2,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Người lính đã bị trừng phạt vì từ chối tuân theo mệnh lệnh của cấp trên chỉ huy.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. being refusing (Sai cấu trúc, không kết hợp being + V-ing trong trường hợp này)<br>B. having refusing (Sai cấu trúc, sau having phải là V3/V-ed)<br>C. having refused (Dạng danh động từ hoàn thành - Perfect Gerund)<br>D. being refused (Dạng bị động của danh động từ)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn C. Sau giới từ 'for' ta dùng V-ing. Để nhấn mạnh hành động từ chối xảy ra trước hành động bị phạt (punished), ta dùng Danh động từ hoàn thành 'having + V3/ed'. Câu mang nghĩa chủ động (người lính chủ động từ chối mệnh lệnh).</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A và B sai hoàn toàn về ngữ pháp hình thái động từ. D sai vì mang nghĩa bị động ('bị từ chối'), không phù hợp với ngữ cảnh ngữ nghĩa của câu.</div>"
+    },
+    {
+        "question": "______ as severely obese, a person must have a body mass index of roughly 100 Pounds or more overweight for an average adult man.",
+        "options": ["To classify", "Classified", "To be classified", "Being classified"],
+        "correctIndex": 2,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Để được phân loại là béo phì nghiêm trọng, một người phải có chỉ số khối cơ thể (BMI) thừa khoảng 100 pounds hoặc nhiều hơn so với một người đàn ông trưởng thành trung bình.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. To classify (Để phân loại - mang nghĩa chủ động)<br>B. Classified (Được phân loại - rút gọn mệnh đề dạng bị động)<br>C. To be classified (Để được phân loại - mục đích dạng bị động)<br>D. Being classified (Việc được phân loại)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn C. Câu này cần một cụm từ chỉ mục đích đứng đầu câu ('Để được...'). Đồng thời, chủ ngữ đứng sau dấu phẩy là 'a person' (một người) phải 'được người khác phân loại' chứ không tự phân loại, do đó cần cấu trúc bị động 'To be + V3/ed'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A sai vì mang nghĩa chủ động. B sai vì 'Classified' đứng đầu câu làm mệnh đề trạng ngữ rút gọn chỉ nguyên nhân/kết quả/thời gian chứ không chỉ mục đích rõ ràng bằng 'To be classified'. D không hợp cấu trúc chỉ mục đích đầu câu này.</div>"
+    },
+    {
+        "question": "______ a little bit of history, it was thought to be impossible in any computer system ______ a window with a functioning channel.",
+        "options": ["To have given / to have", "Giving / having", "To give / to have", "Given / having"],
+        "correctIndex": 3,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Nếu xét đến một chút lịch sử, việc có một cửa sổ với một kênh chức năng hoạt động từng được cho là bất khả thi trong bất kỳ hệ thống máy tính nào.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. To have given / to have<br>B. Giving / having<br>C. To give / to have<br>D. Given / having</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D. Thành ngữ 'Given + N' mang ý nghĩa là 'Xét đến, căn cứ vào cái gì'. Ở vế sau, cấu trúc 'it was thought to be impossible... having' sử dụng Gerund (having) làm chủ ngữ thực sự bổ trợ sau tính từ trong một số cấu trúc văn cảnh cổ/đặc biệt hoặc rút gọn danh động từ tương tác hệ thống.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> Các phương án A, B, C không tạo nên cụm từ cố định 'Given...' mang nghĩa 'xét đến/căn cứ vào' hợp lý cho đầu câu.</div>"
+    },
+    {
+        "question": "For more severe illnesses, medication is likely ______ but this may be supplemented with psychotherapy.",
+        "options": ["to be needed", "to need", "to have needed", "to have been needed"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Đối với các bệnh nghiêm trọng hơn, thuốc có khả năng là sẽ cần được dùng, nhưng điều này có thể được bổ sung thêm bằng liệu pháp tâm lý.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. to be needed (Dạng bị động của to-V)<br>B. to need (Dạng chủ động của to-V)<br>C. to have needed (Dạng hoàn thành chủ động)<br>D. to have been needed (Dạng hoàn thành bị động)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Ta có cấu trúc 'S + be likely + to-V' (Có khả năng làm gì/xảy ra cái gì). Do chủ ngữ là 'medication' (thuốc men) là vật, nên phải mang nghĩa bị động 'được cần đến' -> 'to be needed'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B và C sai vì mang nghĩa chủ động. D sai vì chia dạng hoàn thành (nhấn mạnh hành động đã hoàn tất trong quá khứ) trong khi ngữ cảnh câu nói về khả năng chung chung ở tương lai hoặc hiện tại.</div>"
+    },
+    {
+        "question": "We regret ______ that all buses to Nottingham will experience delays due to bad weather conditions.",
+        "options": ["announcing", "to announce", "to have announced", "to have been announced"],
+        "correctIndex": 1,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Chúng tôi rất tiếc phải thông báo rằng tất cả các xe buýt đến Nottingham sẽ bị hoãn chuyến do điều kiện thời tiết xấu.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. announcing (Việc thông báo - dùng khi tiếc về việc đã làm)<br>B. to announce (Để thông báo - lấy làm tiếc trước khi làm/phải làm)<br>C. to have announced (Dạng hoàn thành)<br>D. to have been announced (Dạng bị động hoàn thành)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn B. Ta có cấu trúc: 'Regret + to-V' (Lấy làm tiếc khi phải làm gì - thông báo tin xấu); 'Regret + V-ing' (Hối hận vì đã làm gì trong quá khứ). Ở đây người nói đang chuẩn bị đưa ra thông báo xấu nên dùng 'to announce'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A sai nghĩa vì hành động thông báo chưa diễn ra trong quá khứ để mà 'hối hận'. C và D sai hình thái và thời gian.</div>"
+    },
+    {
+        "question": "Your proposals deserve ______ in detail.",
+        "options": ["being considered", "considered", "to have considered", "to be considered"],
+        "correctIndex": 3,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Các đề xuất của bạn xứng đáng được xem xét một cách chi tiết.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. being considered (Dạng V-ing bị động)<br>B. considered (V3/ed đứng đơn lẻ sai cấu trúc sau deserve)<br>C. to have considered (Dạng hoàn thành chủ động)<br>D. to be considered (Dạng bị động to-V)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D hoặc có thể dùng V-ing chủ động mang nghĩa bị động (deserve considering). Do phương án chỉ có 'being considered' chứ không phải 'considering', nên phương án chuẩn ngữ pháp nhất ở đây là 'to be considered' (xứng đáng được xem xét). Cấu trúc: 'Deserve + to be V3/ed'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A ít phổ biến và kém chuẩn xác hơn D sau deserve trong cấu trúc bị động truyền thống. B và C hoàn toàn sai cấu trúc ngữ pháp chủ động/bị động.</div>"
+    },
+    {
+        "question": "My brother and I meant ______ some studying last night, but Alicia called and we both spent half an hour on the phone.",
+        "options": ["doing", "to have done", "to do", "to have been doing"],
+        "correctIndex": 1,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Anh trai tôi và tôi đã định học bài tối qua, nhưng Alicia đã gọi điện và cả hai chúng tôi đã buôn điện thoại mất nửa tiếng.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. doing (Dẫn tới việc gì - mean + V-ing)<br>B. to have done (Định làm gì trong quá khứ nhưng thực tế đã không làm)<br>C. to do (Ý định làm gì)<br>D. to have been doing (Dạng hoàn thành tiếp diễn)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn B. Ta có cấu trúc 'Mean + to-V' (Định làm gì). Khi muốn diễn tả một định định, dự tính trong quá khứ nhưng kết cục thực tế **đã không xảy ra/không làm được**, ta dùng cấu trúc hoàn thành: 'meant + to have V3/ed'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A sai vì 'mean + V-ing' nghĩa là 'mang ý nghĩa/kéo theo việc gì'. C chỉ là ý định chung chung không lột tả được việc 'tiếc nuối vì đã không thực hiện được' rõ ràng bằng B. D sai cấu trúc nhấn mạnh.</div>"
+    },
+    {
+        "question": "The American government has considered ______ a new group of troops to Iraq.",
+        "options": ["send", "sending", "to send", "to have sent"],
+        "correctIndex": 1,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Chính phủ Mỹ đã xem xét việc gửi một nhóm quân mới đến Iraq.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. send (V nguyên thể)<br>B. sending (Danh động từ V-ing)<br>C. to send (Động từ nguyên thể có to)<br>D. to have sent (Dạng hoàn thành)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn B. Ta có cấu trúc ngữ pháp cố định: 'Consider + V-ing' (Cân nhắc, xem xét làm việc gì đó). Do đó động từ 'send' phải chuyển thành 'sending'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, C, D đều vi phạm quy tắc kết hợp động từ sau 'consider' vì động từ này không đi với V bare hay to-V.</div>"
+    },
+    {
+        "question": "Her refusal ______ the violence left her open to the charge of positive support for the campaign.",
+        "options": ["to condemn", "condemning", "being condemned", "to be condemned"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Việc cô ấy từ chối lên án bạo lực đã khiến cô ấy phải đối mặt với cáo buộc ủng hộ tích cực cho chiến dịch.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. to condemn (Để lên án - chủ động)<br>B. condemning (V-ing chủ động)<br>C. being condemned (V-ing bị động)<br>D. to be condemned (Bị động)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Danh từ 'refusal' (sự từ chối) đi kèm với động từ nguyên mẫu có to theo cấu trúc: 'refusal + to-V' (Sự từ chối làm gì). Ở đây cô ấy từ chối việc lên án hành vi bạo lực (mang nghĩa chủ động) nên chọn 'to condemn'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B và C sai vì danh từ 'refusal' không đi trực tiếp với V-ing. D sai nghĩa vì mang nghĩa bị động ('bị lên án').</div>"
+    },
+    {
+        "question": "A new tax that is thought ______ protests soon ______.",
+        "options": ["to have caused / have been introduced", "to cause / will be introduced", "to be causing / has introduced", "to have caused / introduces"],
+        "correctIndex": 1,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Một loại thuế mới được cho là sẽ gây ra các cuộc biểu tình sẽ sớm được áp dụng.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A, B, C, D là các tổ hợp động từ khác nhau.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn B. Cấu trúc câu gồm một mệnh đề quan hệ rút gọn hoặc chỉ mục đích/dự đoán tương lai. 'is thought to cause' (được nghĩ là sẽ gây ra) kết hợp từ chỉ tương lai 'soon' đi với dạng bị động tương lai 'will be introduced' (sẽ được giới thiệu/áp dụng).</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> Các phương án khác lệch thì và sai dạng cấu trúc bị động cần thiết cho vật ('a new tax' phải được 'introduced').</div>"
+    },
+    {
+        "question": "______ the impact of educational options, researchers took into account the fact that students participating in school choice were likely ______ from nonparticipants in terms of motivation.",
+        "options": ["Estimating / to have differed", "To estimate / to differ", "Estimated / differing", "To be estimated / to differ"],
+        "correctIndex": 1,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Để đánh giá tác động của các lựa chọn giáo dục, các nhà nghiên cứu đã tính đến thực tế là những học sinh tham gia vào việc lựa chọn trường học có khả năng khác biệt với những học sinh không tham gia về mặt động lực.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Xét vị trí 1 cần To-V chỉ mục đích. Vị trí 2 sau 'be likely' cần To-V.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn B. Vị trí thứ nhất diễn tả mục đích hành động của nhà nghiên cứu: 'To estimate...' (Để đánh giá...). Vị trí thứ hai đi theo cấu trúc: 'be likely + to-V' (có khả năng làm gì) -> 'likely to differ'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, C, D sử dụng sai dạng phân từ hoặc danh động từ không đáp ứng được mục đích ngữ pháp chỉ mục đích đầu câu và sau cụm 'likely'.</div>"
+    },
+    {
+        "question": "The first boss ______ all the employees ______ late in the workshop was James Drilldown.",
+        "options": ["to make / stay", "to make / staying", "made / stayed", "to have made / stayed"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Người sếp đầu tiên bắt tất cả nhân viên ở lại muộn trong phân xưởng là James Drilldown.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Vị trí 1 sau 'the first + N'. Vị trí 2 sau động từ 'make'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Khi danh từ đứng sau các từ số thứ tự như 'the first', 'the second', mệnh đề quan hệ được rút gọn thành dạng 'To-V' -> 'to make'. Tiếp theo, ta có cấu trúc sai khiến: 'Make + O + V (bare)' (Bắt ai làm gì) -> động từ 'stay' phải ở dạng nguyên thể không to.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B sai vì dùng 'staying'. C sai vì dùng 'made'. D sai vì cấu trúc 'stayed' sau make là sai ngữ pháp cơ bản.</div>"
+    },
+    {
+        "question": "We suggest ______ some ways to overcome the challenges, from state bureaucracies to public awareness that investment shouldn’t be justified on their academic benefits alone.",
+        "options": ["reorganizing / raising", "reorganizing / to raise", "being reorganized / being raised", "having reorganized / having raised"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Chúng tôi đề xuất tổ chức lại một số cách thức để vượt qua các thử thách, từ bộ máy quan liêu nhà nước cho đến việc nâng cao nhận thức cộng đồng rằng đầu tư không nên chỉ được hợp lý hóa dựa trên các lợi ích học thuật thuần túy.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. reorganizing / raising<br>B. reorganizing / to raise</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Ta có cấu trúc 'Suggest + V-ing' (Đề xuất làm gì) -> 'reorganizing'. Phần phía sau mang tính liệt kê song hành nối tiếp từ giới từ 'from... to...' nên sau giới từ 'to' này ta cũng cần một danh động từ -> 'raising (public awareness)' (việc nâng cao nhận thức).</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B sai vì hiểu nhầm 'to' ở đây là to-V, thực chất nó là cấu trúc giới từ 'from X to Y'. C và D không phù hợp sắc thái ý nghĩa của câu.</div>"
+    },
+    {
+        "question": "Studies that are under development aim ______ leaders ______ an assortment of public and private responses related to housing and government performance.",
+        "options": ["helping / to strengthen", "to help / strengthening", "to be helped / strengthened", "to help / strengthen"],
+        "correctIndex": 3,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Các nghiên cứu đang trong quá trình phát triển nhằm mục đích giúp các nhà lãnh đạo củng cố một loạt các phản ứng công và tư liên quan đến nhà ở và hiệu quả hoạt động của chính phủ.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Vị trí 1 sau động từ 'aim'. Vị trí 2 sau động từ 'help'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D. Động từ 'aim' đi kèm với cấu trúc 'aim + to-V' (nhắm tới/mục đích làm gì) -> 'to help'. Kế tiếp ta có cấu trúc với động từ help: 'Help + O + V(bare) / to-V' (Giúp ai làm gì). Do đó động từ 'strengthen' giữ nguyên mẫu là hoàn toàn chính xác.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A sai vì sau aim dùng V-ing. B sai vì sau help không dùng trực tiếp dạng V-ing bổ trợ tân ngữ chỉ hành động của tân ngữ như vậy. C sai hoàn toàn ý nghĩa bị động.</div>"
+    },
+    {
+        "question": "To help a Palestinian state ______ the challenges in some areas, the new state was estimated ______ at least 33 billion in private capital investment over the first ten years of statehood.",
+        "options": ["to be met / to require", "meet / to have required", "to meet / requiring", "meet / to require"],
+        "correctIndex": 3,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Để giúp một nhà nước Palestine giải quyết các thách thức trong một số lĩnh vực, nhà nước mới này được ước tính sẽ cần ít nhất 33 tỷ USD vốn đầu tư tư nhân trong mười năm đầu tiên thành lập nhà nước.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Vị trí 1 sau 'help + O'. Vị trí 2 sau cấu trúc bị động 'be estimated'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D. Ta có 'Help + O + V(bare)' -> 'meet'. Cấu trúc bị động dự đoán: 'S + be estimated + to-V' (Được ước tính làm gì/cần gì) -> 'to require'. Do đó, cặp 'meet / to require' đáp ứng chính xác cấu trúc.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A dùng bị động 'to be met' sai nghĩa. B dùng 'to have required' sai sắc thái thời gian (đây là ước tính cho tương lai mười năm đầu). C dùng V-ing sau estimated là sai ngữ pháp.</div>"
+    },
+    {
+        "question": "In the grand drama of the geologic time, paleontologists have seen countless species ______ and ______ the stage.",
+        "options": ["enter / exit", "to be entering / exiting", "entered / exited", "being entered / exited"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Trong vở kịch vĩ đại của thời gian địa chất, các nhà cổ sinh vật học đã chứng kiến vô số loài sinh vật xuất hiện và rời khỏi sân khấu.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Cấu trúc với động từ giác quan 'see'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Ta có cấu trúc động từ tri giác: 'See + O + V(bare)' (Chứng kiến toàn bộ hành động diễn ra từ đầu đến cuối). Do tiến trình lịch sử địa chất các loài sinh ra rồi tuyệt chủng biến mất trọn vẹn, ta dùng cặp động từ nguyên mẫu song hành 'enter / exit'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B, C, D vi phạm nguyên tắc chia động từ sau tân ngữ của động từ tri giác 'see' trong ngữ cảnh chủ động này.</div>"
+    },
+    {
+        "question": "It is unreasonable ______ the returns for a program serving a disadvantaged population when the same program serves a broader population.",
+        "options": ["to expect / to be matched", "expecting / to match", "to be expected / to be matched", "expecting / matching"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Thật là vô lý khi kỳ vọng kết quả lợi nhuận thu về của một chương trình phục vụ đối tượng dân số thiệt thòi lại có thể tương xứng/bằng với khi chính chương trình đó phục vụ một lượng dân số rộng lớn hơn.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Cấu trúc giả định với chủ ngữ giả 'It'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Ta có cấu trúc: 'It is + adj + to-V' -> 'It is unreasonable to expect...'. Tại vị trí số hai, 'the returns' (kết quả/lợi nhuận) là vật, nó phải 'được làm cho tương xứng/được khớp' nên cần dạng bị động 'to be matched'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B và D dùng V-ing đầu tiên không đúng chuẩn cấu trúc chủ ngữ giả thông thường. C dùng dạng bị động 'to be expected' làm sai nghĩa chủ thể của câu.</div>"
+    },
+    {
+        "question": "We have to plan ahead and recognize what we need ______ ______ the potential damage and loss.",
+        "options": ["to do / to limit", "doing / limiting", "to do / limit", "to have done / to limit"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Chúng ta phải lên kế hoạch trước và nhận biết những gì chúng ta cần làm để hạn chế thiệt hại và tổn thất tiềm ẩn.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Vị trí 1 sau 'need'. Vị trí 2 chỉ mục đích hành động.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Ta có cấu trúc 'Need + to-V' (Cần làm gì) -> 'need to do'. Vị trí tiếp theo dùng cụm động từ nguyên mẫu có to để chỉ mục đích hành động ('để hạn chế...') -> 'to limit'. Cặp 'to do / to limit' là hoàn toàn chính xác.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B sai vì dùng đuôi -ing. C sai vì thiếu 'to' ở động từ chỉ mục đích số hai. D sai thì hoàn thành.</div>"
+    },
+    {
+        "question": "During the 17th century, people left England ______ from religious persecution.",
+        "options": ["to be escaping", "to have escaped", "escaping", "to escape"],
+        "correctIndex": 3,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Trong suốt thế kỷ 17, người ta đã rời bỏ nước Anh để chạy trốn khỏi sự đàn áp tôn giáo.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. to be escaping (Để đang trốn thoát)<br>B. to have escaped (Dạng hoàn thành)<br>C. escaping (Phân từ chỉ hành động song song)<br>D. to escape (Để trốn thoát - chỉ mục đích)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D. Để chỉ mục đích của hành động 'rời nước Anh' (left England làm gì?), ta dùng cấu trúc nguyên mẫu có to 'To + V(bare)' -> 'to escape' (để trốn thoát).</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, B, C không diễn tả mục đích một cách trực diện và đơn giản phù hợp với ngữ cảnh lịch sử này.</div>"
+    },
+    {
+        "question": "______ a strong country means ______ a leader in your field among the neighborhood.",
+        "options": ["To be / to be", "To have been / being", "Being / being", "To be / to have been"],
+        "correctIndex": 2,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Là một quốc gia mạnh đồng nghĩa với việc là một thế lực dẫn đầu trong lĩnh vực của bạn giữa các nước láng giềng.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Sử dụng danh động từ làm chủ ngữ và bổ ngữ sau động từ mean.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn C. Dùng V-ing đứng đầu câu làm chủ ngữ chỉ một sự thật/khái niệm: 'Being a strong country...'. Thêm vào đó, động từ 'mean + V-ing' mang ý nghĩa là 'có nghĩa là/kéo theo việc gì'. Do đó vị trí thứ hai cũng là một Gerund -> 'being'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> Các phương án khác dùng To-V hoặc phối hợp hoàn thành không phản ánh đúng cấu trúc định nghĩa song hành mang tính tổng quát phổ quát này.</div>"
+    },
+    {
+        "question": "______ quite truthful with you, the meal you made was too awful ______.",
+        "options": ["To have been / to eat", "To be / to be eating", "Being / eat", "To be / to eat"],
+        "correctIndex": 3,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Thành thật mà nói với bạn, bữa ăn bạn nấu quá kinh khủng để có thể nuốt trôi (ăn được).</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Cụm từ cố định đầu câu và cấu trúc 'too... to...'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D. Ta có cụm từ thành ngữ mở đầu quen thuộc: 'To be truthful with you' hoặc 'To be honest with you' (Thành thật mà nói). Vế sau áp dụng cấu trúc: 'Too + adj + to-V' (Quá... để làm gì) -> 'too awful to eat'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, B, C sai cấu trúc cụm từ mở đầu hoặc sai quy tắc của cấu trúc 'too... to V'.</div>"
+    },
+    {
+        "question": "When infected by extremism, local insurgencies become more violent, difficult ______, and likely ______ out and spread.",
+        "options": ["to be defeating / to lash", "defeating / to have lashed", "to have defeated / to be lashed", "to defeat / to lash"],
+        "correctIndex": 3,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Khi bị nhiễm tư tưởng cực đoan, các nhóm bạo loạn địa phương trở nên hung hãn hơn, khó bị đánh bại hơn và có khả năng sẽ tấn công dữ dội và lan rộng ra.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Cấu trúc sau tính từ 'difficult' và sau cụm 'likely'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D. Cấu trúc 'difficult + to-V' (Khó để làm gì, mang nghĩa chủ động nhưng dịch nghĩa tương đương bị động sau tính từ tính chất) -> 'difficult to defeat'. Vị trí hai đi kèm cấu trúc 'be likely + to-V' (có khả năng làm gì) -> 'likely to lash out'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> Các phương án A, B, C chia sai hình thái động từ to-V tiếp diễn, hoàn thành hoặc phân từ, không đáp ứng tính song hành cấu trúc cơ bản.</div>"
+    },
+    {
+        "question": "In the 1930s, physicists devised machines for ______ subatomic particles by electromagnetic forces and making them ______ faster and faster.",
+        "options": ["pushing / going", "having pushed / to go", "pushing / go", "being pushed / go"],
+        "correctIndex": 2,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Vào những năm 1930, các nhà vật lý đã phát minh ra những cỗ máy để đẩy các hạt hạ nguyên tử bằng lực điện từ và khiến chúng chuyển động ngày càng nhanh hơn.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Vị trí 1 sau giới từ 'for'. Vị trí 2 sau cấu trúc 'make + O'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn B hoặc C tùy ngữ cảnh, nhưng ở đây hành động 'making them...' song hành với vị trí 1 nên vị trí 1 cần V-ing sau giới từ 'for' -> 'pushing'. Tại vị trí 2, cấu trúc 'make + O + V(bare)' bắt buộc động từ 'go' phải để dạng nguyên thể không to. Do đó chọn C.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A sai vì dùng 'going'. B sai vì dùng 'to go' sau make. D sai nghĩa bị động không thích hợp cho thao tác kỹ thuật của máy móc.</div>"
+    },
+    {
+        "question": "New Jersey became the first state in decades ______ the death penalty as Governor Corzine signed a measure ______ what he called \"state-endorsed killing.\"",
+        "options": ["to repeal / to end", "repealing / to have ended", "having repealed / ending", "to repeal / being ended"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> New Jersey đã trở thành bang đầu tiên trong nhiều thập kỷ bãi bỏ hình phạt tử hình khi Thống đốc Corzine ký một biện pháp nhằm chấm dứt cái mà ông gọi là \"hành vi giết người do bang bảo trợ\".</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Rút gọn mệnh đề sau cụm số thứ tự 'the first state'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Theo quy tắc rút gọn mệnh đề quan hệ, sau danh từ có 'the first' ta dùng 'To-V' -> 'to repeal'. Vế sau, biện pháp 'để chấm dứt' cái gì đó mang hàm ý mục đích nên dùng tiếp 'to end'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B và C dùng dạng đuôi -ing sai quy tắc rút gọn sau số thứ tự 'the first'. D dùng bị động 'being ended' sai ý nghĩa tác động của văn bản luật.</div>"
+    },
+    {
+        "question": "The World Health Organization, trying to attract attention to the threat, has called on governments ______ their pandemic plans ______ the health consequences.",
+        "options": ["update / to minimize", "updating / minimizing", "to have updated / to minimize", "to update / to minimize"],
+        "correctIndex": 3,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Tổ chức Y tế Thế giới, trong nỗ lực thu hút sự chú ý đến mối đe dọa này, đã kêu gọi các chính phủ cập nhật các kế hoạch đại dịch của họ để giảm thiểu các hậu quả về sức khỏe.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Cấu trúc với động từ 'call on'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D. Ta có cấu trúc: 'Call on sb + to-V' (Kêu gọi ai đó làm gì) -> 'to update'. Vị trí thứ hai dùng cụm từ chỉ mục đích 'để giảm thiểu...' -> 'to minimize'. Do đó cặp 'to update / to minimize' hoàn toàn chính xác.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, B, C không đúng cấu trúc đi sau động từ 'call on' hoặc sai chức năng chỉ mục đích của hành động.</div>"
+    },
+    {
+        "question": "My parents let my sister ______ camping with her friends in the mountain.",
+        "options": ["not go", "going", "go", "to go"],
+        "correctIndex": 2,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Bố mẹ tôi cho phép em gái tôi đi cắm trại cùng bạn bè của nó ở trên núi.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. not go (Dạng phủ định nguyên thể)<br>B. going (Danh động từ)<br>C. go (Động từ nguyên thể không to)<br>D. to go (Động từ nguyên thể có to)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn C. Ta có cấu trúc ngữ pháp rất căn bản: 'Let + O + V (bare)' (Cho phép ai làm gì). Vì vậy động từ 'go' phải ở dạng nguyên mẫu không có 'to'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B và D sai hoàn toàn vì cấu trúc ngữ pháp của 'let' không bao giờ đi với V-ing hay To-V. A sai về mặt ngữ nghĩa ngữ cảnh khẳng định của câu.</div>"
+    },
+    {
+        "question": "We intend him ______ the truth for fear that he’ll fly into a fit of madness.",
+        "options": ["to tell", "telling", "not tell", "not to tell"],
+        "correctIndex": 3,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Chúng tôi định không nói cho anh ấy biết sự thật vì sợ rằng anh ấy sẽ đùng đùng nổi điên lên.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Cấu trúc định làm gì với động từ intend.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D. Cấu trúc: 'Intend + (sb) + to-V' (Định/Muốn ai làm gì). Khi chuyển sang thể phủ định 'không làm gì', từ 'not' phải đứng trước To-V -> 'not to tell'. Phù hợp nghĩa 'vì sợ anh ấy nổi điên nên quyết định không kể'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A sai về mặt ý nghĩa (kể sự thật ra thì anh ta sẽ nổi điên, trái logic câu). B và C sai công thức ngữ pháp của 'intend'.</div>"
+    },
+    {
+        "question": "You can’t prevent him from ______ alcohol.",
+        "options": ["drink", "to drink", "drinking", "drank"],
+        "correctIndex": 2,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Bạn không thể ngăn cản anh ta uống rượu được đâu.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. drink (V bare)<br>B. to drink (To-V)<br>C. drinking (V-ing)<br>D. drank (V2 quá khứ)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn C. Ta áp dụng cấu trúc giới từ cố định: 'Prevent sb + from + V-ing' (Ngăn cản ai làm việc gì). Do đứng sau giới từ 'from' nên động từ 'drink' bắt buộc phải thêm đuôi -ing thành 'drinking'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, B, D đều sai nguyên tắc kết hợp từ sau giới từ 'from'.</div>"
+    },
+    {
+        "question": "I really believe that you should let your son ______ his own decisions; he is certainly old enough ______ so.",
+        "options": ["to be making – done", "making - being done", "to make - for doing", "make - to do"],
+        "correctIndex": 3,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Tôi thực sự tin rằng bạn nên để con trai mình tự đưa ra quyết định của riêng nó; nó chắc chắn đã đủ lớn để làm như vậy rồi.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Vị trí 1 sau 'let + O'. Vị trí 2 sau cấu trúc 'enough'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D. Vị trí đầu áp dụng 'Let + O + V(bare)' -> 'make'. Vị trí thứ hai áp dụng cấu trúc tính từ chỉ độ tuổi năng lực: 'Adj + enough + to-V' (Đủ... để làm gì) -> 'enough to do so'. Hai vị trí kết hợp thành cặp 'make - to do'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, B, C đều vi phạm các quy tắc cơ bản của cấu trúc liên quan đến động từ 'let' và cấu trúc hệ quả 'enough'.</div>"
+    },
+    {
+        "question": "My father can’t decide whether ______ the job or not, because if he does, it’ll require him ______ away from home very often.",
+        "options": ["to take - to be", "to be taking - being", "taking - to have been", "taking - having been"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Bố tôi không thể quyết định được có nên nhận công việc đó hay không, bởi vì nếu ông ấy nhận, nó sẽ yêu cầu ông ấy phải xa nhà rất thường xuyên.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Cấu trúc từ nghi vấn kèm 'whether' và cấu trúc động từ 'require'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Ta có cấu trúc chọn lựa lựa chọn: 'whether + to-V' (liệu có nên làm gì hay không) -> 'whether to take'. Tiếp theo, cấu trúc động từ hành động: 'Require + sb + to-V' (Yêu cầu ai làm gì) -> 'require him to be away'. Do đó chọn phương án A.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B, C, D sử dụng sai dạng V-ing hoặc thì hoàn thành không phù hợp sau cấu trúc 'whether' và động từ 'require'.</div>"
+    },
+    {
+        "question": "It should be a priority for world leaders ______ durable solutions for world peace rather than ______ their time and effort on transitory ones.",
+        "options": ["to find – waste", "finding - to waste", "having found – wasted", "being found - wasting"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Việc tìm kiếm các giải pháp lâu dài cho hòa bình thế giới nên là một ưu tiên đối với các nhà lãnh đạo thế giới thay vì lãng phí thời gian và công sức của họ vào những giải pháp nhất thời ngắn hạn.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Cấu trúc chủ ngữ giả cấu trúc danh từ trọng tâm 'priority'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Cấu trúc giả định: 'It is a priority (for sb) + to-V' -> 'to find'. Vế sau nối bằng cấu trúc so sánh hơn kém 'rather than', có tính chất song hành đồng bộ cấu trúc, nên động từ 'waste' được để ở dạng nguyên thể không to tương thích bổ trợ lược bỏ thành 'waste'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B, C, D không tuân thủ cấu trúc giả định bắt đầu bằng 'to-V' hoặc phá vỡ tính đối xứng song hành của thành phần câu sau 'rather than'.</div>"
+    },
+    {
+        "question": "We saw the first star ______ in the sky.",
+        "options": ["twinkling", "twinkle", "to twinkle", "twinkled"],
+        "correctIndex": 1,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Chúng tôi đã nhìn thấy ngôi sao đầu tiên lấp lánh trên bầu trời.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Động từ giác quan tri giác 'see'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn B. Mặc dù có 'the first star', nhưng động từ chính chi phối hành động phía sau là động từ tri giác 'see' -> 'See + O + V(bare) / V-ing'. Ngôi sao lấp lánh như một sự kiện trọn vẹn, ta có thể dùng 'twinkle' (hoặc nếu nhấn mạnh tính tiếp diễn tại thời điểm nhìn có thể dùng twinkling). Tuy nhiên theo đáp án chuẩn của bộ đề thi HSA truyền thống, cấu trúc V bare được ưu tiên lựa chọn tối ưu -> 'twinkle'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> C sai hoàn toàn vì động từ giác quan chủ động không đi với To-V trực tiếp sau tân ngữ. D sai thể bị động.</div>"
+    },
+    {
+        "question": "It’s no good ______ to him, he never answers letters.",
+        "options": ["write", "being written", "writing", "to write"],
+        "correctIndex": 2,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Thật vô ích khi viết thư cho anh ta, anh ta chẳng bao giờ trả lời thư đâu.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. write (V bare)<br>B. being written (Bị động V-ing)<br>C. writing (V-ing chủ động)<br>D. to write (To-V)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn C. Ta có cấu trúc thành ngữ cố định trong tiếng Anh: 'It's no good / It's no use + V-ing' (Vô ích khi làm việc gì đó). Vì vậy động từ 'write' phải chia thành 'writing'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, B, D sai công thức ngữ pháp cố định của cấu trúc 'It's no good'.</div>"
+    },
+    {
+        "question": "Soon after take-off, the hijackers went into the captain’s cabin and told him ______ them to another destination.",
+        "options": ["flying", "to fly", "fly", "flew"],
+        "correctIndex": 1,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Ngay sau khi cất cánh, những kẻ không tặc đã xông vào buồng lái của cơ trưởng và bảo ông ấy lái máy bay đưa chúng đến một điểm đến khác.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. flying (V-ing)<br>B. to fly (To-V)<br>C. fly (V bare)<br>D. flew (V2 quá khứ)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn B. Áp dụng cấu trúc câu mệnh lệnh gián tiếp cấu trúc động từ 'tell': 'Tell + sb + to-V' (Bảo/Yêu cầu ai làm việc gì). Vì thế từ phù hợp nhất đi sau 'him' là 'to fly'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, C, D không đúng cấu trúc ngữ pháp bắt buộc của động từ 'tell'.</div>"
+    },
+    {
+        "question": "Ann Nolan Clark’s simple but poetic prose and ability ______ people ______ cultural similarities and differences gained her a mainstream following.",
+        "options": ["making - to appreciate", "make - to be appreciating", "to have made – appreciated", "to make - appreciate"],
+        "correctIndex": 3,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Văn xuôi đơn giản nhưng giàu chất thơ và khả năng khiến mọi người trân trọng những nét tương đồng và khác biệt văn hóa của Ann Nolan Clark đã giúp cô có được một lượng người theo dõi lớn.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Cấu trúc đi sau danh từ ability và động từ bộc phát hệ quả make.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D. Ta có cấu trúc: Danh từ 'ability + to-V' (khả năng làm gì) -> 'ability to make'. Kế tiếp là cấu trúc tác động sai khiến quen thuộc: 'Make + O + V(bare)' (Khiến ai đó làm gì/nhận ra điều gì) -> 'make people appreciate'. Cặp từ 'to make - appreciate' khớp hoàn toàn.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, B, C sai cấu trúc ngữ pháp sau tính chất danh từ 'ability' hoặc lạm dụng sai hình thái động từ sau 'make'.</div>"
+    },
+    {
+        "question": "In designing a new product, it is important ______ the production process carefully, as a mistake discovered later on can be expensive ______.",
+        "options": ["having planned – rectify", "to be planning - rectified", "to plan - to rectify", "plan - to be rectified"],
+        "correctIndex": 2,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Khi thiết kế một sản phẩm mới, việc lên kế hoạch cẩn thận cho quy trình sản xuất là rất quan trọng, vì một sai sót được phát hiện sau đó có thể rất tốn kém để khắc phục.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Cấu trúc 'It is important + to V' và tính từ hệ quả 'expensive + to V'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn C. Cấu trúc chủ ngữ giả thông dụng: 'It is + adj + to-V' -> 'it is important to plan'. Ở vế thứ hai, cấu trúc tính từ bổ trợ hành động: 'Adj + to-V' (như thế nào để làm gì) -> 'expensive to rectify' (đắt đỏ để sửa chữa, khắc phục). Do đó chọn cụm 'to plan - to rectify'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> Các phương án A, B, D chia sai hình thái động từ nguyên mẫu có to cần thiết cho cả hai vị trí trống.</div>"
+    },
+    {
+        "question": "He devoted most of his time ______ novels.",
+        "options": ["to having written", "to write", "to writing", "to have written"],
+        "correctIndex": 2,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Anh ấy đã cống hiến phần lớn thời gian của mình cho việc viết tiểu thuyết.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. to having written (Dạng hoàn thành)<br>B. to write (To-V nguyên mẫu)<br>C. to writing (To + V-ing)<br>D. to have written (To + hoàn thành)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn C. Ta có cấu trúc cụm động từ đi với giới từ cực kỳ nổi tiếng: 'Devote + cụm danh từ/thời gian + TO + V-ing/N' (Cống hiến/dành hết cái gì vào việc gì). Chữ 'to' ở đây là giới từ, theo sau bắt buộc là V-ing -> 'to writing'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B sai vì nhầm lẫn 'to' là kí hiệu của To-V. A và D sai cấu trúc thời gian ngữ cảnh.</div>"
+    },
+    {
+        "question": "As far as I can see, you can’t decide whether ______ alone or share the flat with a friend, but were I you, I’d choose ______ on my own, as then you’ll be more independent.",
+        "options": ["to live - to live", "to have lived - having lived", "to be living – live", "living - living"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Theo như tôi thấy, bạn không thể quyết định được liệu nên sống một mình hay chia sẻ căn hộ với một người bạn, nhưng nếu tôi là bạn, tôi sẽ chọn sống tự lập một mình, vì khi đó bạn sẽ tự lập hơn.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Cấu trúc 'whether + to-V' và cấu trúc động từ 'choose'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Vị trí thứ nhất đi theo cấu trúc: 'Whether + to-V' (liệu nên làm gì) -> 'whether to live' (song hành với động từ 'share' nguyên mẫu phía sau). Vị trí thứ hai đi theo cấu trúc động từ lựa chọn: 'Choose + to-V' (lựa chọn làm việc gì) -> 'choose to live on my own'. Do đó cặp 'to live - to live' là chính xác tuyệt đối.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B, C, D sử dụng sai hình thức danh động từ hoặc hoàn thành tiếp diễn không phù hợp với quy tắc kết hợp từ của 'whether' và 'choose'.</div>"
+    },
+    {
+        "question": "Who suggested ______ here for the picnic?",
+        "options": ["come", "came", "to come", "coming"],
+        "correctIndex": 4,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Ai đã đề xuất đến đây để dã ngoại vậy?</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. come (V bare)<br>B. came (V2 quá khứ)<br>C. to come (To-V)<br>D. coming (V-ing)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D. Ta có cấu trúc ngữ pháp cố định: 'Suggest + V-ing' (Đề nghị, gợi ý làm hành động gì đó). Do đó động từ 'come' phải biến đổi thành dạng danh động từ 'coming'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, B, C đều vi phạm quy tắc chia động từ đi theo sau động từ 'suggest'.</div>"
+    },
+    {
+        "question": "At last, he admitted ______ that box.",
+        "options": ["to open", "open", "to be opened", "opening"],
+        "correctIndex": 3,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Cuối cùng thì anh ta cũng đã thừa nhận việc mở chiếc hộp đó.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. to open (To-V)<br>B. open (V bare)<br>C. to be opened (Bị động to-V)<br>D. opening (V-ing)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn D. Ta có cấu trúc ngữ pháp cố định: 'Admit + V-ing' (Thừa nhận đã làm việc gì đó). Vì thế, động từ 'open' đi sau phải chia ở dạng Gerund là 'opening'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, B, C đều không tuân thủ quy tắc kết hợp động từ của từ 'admit'.</div>"
+    },
+    {
+        "question": "Don’t hesitate ______ me a ring if any difficulty arises while signing the contract with the landlady.",
+        "options": ["giving", "to have given", "to give", "being given"],
+        "correctIndex": 2,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Đừng ngần ngại gọi điện cho tôi nếu có bất kỳ khó khăn nào phát sinh trong quá trình ký hợp đồng với bà chủ nhà nhé.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. giving (V-ing)<br>B. to have given (Hoàn thành)<br>C. to give (To-V nguyên mẫu)<br>D. being given (Bị động V-ing)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn C. Ta có cấu trúc ngữ pháp thông dụng: 'Hesitate + to-V' (Ngần ngại làm việc gì). Cụm từ 'Don't hesitate to-V' là lời khuyên/lời mời phổ biến. Do đó chọn 'to give'. Cụm 'give me a ring' có nghĩa là gọi điện thoại cho tôi.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A sai cấu trúc vì hesitate không đi kèm trực tiếp V-ing. B sai thì. D sai nghĩa bị động.</div>"
+    },
+    {
+        "question": "The first physician ______ experiments on living animals was Galen, who lived in Rome from AD 129 to about 199.",
+        "options": ["to conduct", "being conducted", "to be conducting", "conducted"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Vị bác sĩ đầu tiên tiến hành các thí nghiệm trên động vật sống là Galen, người từng sống ở Rome từ năm 129 đến khoảng năm 199 sau Công nguyên.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Rút gọn mệnh đề quan hệ có chứa danh từ số thứ tự 'the first'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Theo quy tắc giản lược mệnh đề quan hệ, khi danh từ đứng trước được bổ nghĩa bởi cụm danh từ số thứ tự 'the first' (đầu tiên), ta rút gọn mệnh đề về dạng động từ nguyên mẫu có to 'To-V' -> 'to conduct' (tiến hành). Câu mang tính chủ động (vị bác sĩ chủ động tiến hành thí nghiệm).</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B và D mang nghĩa bị động là sai nghĩa gốc. C ở dạng tiếp diễn không cần thiết và khiên cưỡng.</div>"
+    },
+    {
+        "question": "Smokers generally do know that smoking is extremely harmful, but it’s just that they can’t help ______ it.",
+        "options": ["doing", "to do", "do", "having done"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Những người hút thuốc nói chung đều biết rõ rằng hút thuốc cực kỳ có hại, nhưng chỉ là họ không thể nào ngừng/nhịn làm việc đó được.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. doing (V-ing)<br>B. to do (To-V)<br>C. do (V bare)<br>D. having done (Hoàn thành)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Cấu trúc thành ngữ đặc biệt: 'Can't help + V-ing' (Không thể nhịn được/không thể ngừng làm việc gì). Ở đây ý nói họ không thể ngưng việc hút thuốc (doing it), do đó động từ phải ở dạng danh động từ 'doing'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B, C, D sai hoàn toàn quy tắc kết hợp ngữ pháp đi kèm sau cụm từ thành ngữ cố định 'can't help'.</div>"
+    },
+    {
+        "question": "I deeply regret ______ to her so severely yesterday. She was badly hurt.",
+        "options": ["to be speaking", "to speak", "having spoken", "being spoken"],
+        "correctIndex": 2,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Tôi vô cùng hối hận vì đã nói năng với cô ấy quá gay gắt ngày hôm qua. Cô ấy đã bị tổn thương sâu sắc.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. to be speaking (Tiếc phải nói)<br>B. to speak (Tiếc phải nói trước khi nói)<br>C. having spoken (Hối hận vì đã nói - Danh động từ hoàn thành)<br>D. being spoken (Bị động)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn C. Ta có cấu trúc 'Regret + V-ing' (Hối hận vì một việc ĐÃ LÀM trong quá khứ). Do hành động xảy ra 'yesterday' (hôm qua) và đã kết thúc, ta có thể dùng 'speaking' hoặc dùng dạng nhấn mạnh tính hoàn thành trước đó là Danh động từ hoàn thành 'having + V3/ed' -> 'having spoken'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A và B dùng cấu trúc 'regret + to V' chỉ áp dụng khi lấy làm tiếc trước khi chuẩn bị thông báo tin buồn. D sai nghĩa bị động.</div>"
+    },
+    {
+        "question": "It took three and a half hours ______ to Singapore.",
+        "options": ["to fly", "flying", "to be flown", "fly"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Phải mất ba tiếng rưỡi đồng hồ để bay tới Singapore.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. to fly (To-V chủ động)<br>B. flying (V-ing)<br>C. to be flown (To-V bị động)<br>D. fly (V bare)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Áp dụng cấu trúc tốn thời gian cố định: 'It takes/took + thời gian + TO + V(bare)' (Mất bao lâu để làm gì). Vì vậy vị trí trống cần một động từ nguyên thể có to -> 'to fly'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B, C, D sai công thức ngữ pháp bắt buộc đi kèm sau cấu trúc thời gian của động từ chủ ngữ giả 'It took...'.</div>"
+    },
+    {
+        "question": "On the whole, I enjoy ______ our local club, but I think there are far too many rules and regulations to feel completely at ease.",
+        "options": ["attending", "attend", "to attend", "being attended"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Nhìn chung, tôi thích tham gia câu lạc bộ địa phương của chúng tôi, nhưng tôi nghĩ có quá nhiều quy định và điều luật khiến tôi không thể cảm thấy hoàn toàn thoải mái.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. attending (V-ing chủ động)<br>B. attend (V bare)<br>C. to attend (To-V)<br>D. being attended (V-ing bị động)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Ta có cấu trúc ngữ pháp cơ bản: 'Enjoy + V-ing' (Thích làm việc gì đó). Bản thân người nói chủ động tham gia/lui tới câu lạc bộ nên dùng dạng chủ động 'attending'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B và C sai công thức ngữ pháp của động từ 'enjoy'. D sai nghĩa vì chia ở thể bị động không hợp ngữ cảnh.</div>"
+    },
+    {
+        "question": "The medical authorities warned everyone not to drink the water without first ______ it.",
+        "options": ["being boiled", "boiling", "having boiled", "having to boil"],
+        "correctIndex": 1,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Các cơ quan y tế đã cảnh báo mọi người không được uống nước mà không đun sôi nó trước tiên.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. being boiled (Bị động)<br>B. boiling (V-ing chủ động)<br>C. having boiled (Hoàn thành chủ động)<br>D. having to boil (Phải đun sôi)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn B. Từ 'without' đóng vai trò là một giới từ (nếu không có/mà không làm gì). Theo quy tắc sau giới từ cần dùng danh động từ V-ing -> 'boiling'. Có từ 'it' làm tân ngữ phía sau chứng minh hành động mang tính chất chủ động (đun sôi nước).</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A sai nghĩa bị động. C không phù hợp bằng hình thái đơn giản B khi đi kèm trực tiếp phó từ chỉ trình tự 'first'. D sai cấu trúc ngữ nghĩa câu.</div>"
+    },
+    {
+        "question": "The skiers would rather ______ through the mountains than go by bus.",
+        "options": ["to travel by train", "travel by train", "traveled by train", "traveling by train"],
+        "correctIndex": 1,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Những người trượt tuyết thích di chuyển bằng tàu hỏa băng qua các ngọn núi hơn là đi bằng xe buýt.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>Cấu trúc thích làm gì hơn với 'would rather'.</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn B. Ta áp dụng cấu trúc so sánh sở thích: 'Would rather + V(bare) + than + V(bare)' (Thích làm việc gì hơn làm việc gì). Để ý phía sau từ 'than' đề bài đã cho sẵn động từ nguyên mẫu 'go', do đó vị trí trống đầu tiên cũng phải đồng bộ ở dạng nguyên mẫu không to -> 'travel by train'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> A, C, D đều vi phạm quy tắc dùng động từ nguyên mẫu không to đứng liền sau cụm trợ động từ 'would rather'.</div>"
+    },
+    {
+        "question": "It was his own fault, but I couldn’t help ______ sorry for him.",
+        "options": ["feeling", "to feel", "having felt", "to have felt"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Đó là lỗi của chính anh ta, nhưng tôi không thể ngăn bản thân mình cảm thấy tội nghiệp cho anh ta.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. feeling (V-ing)<br>B. to feel (To-V)<br>C. having felt (Hoàn thành)<br>D. to have felt (To + hoàn thành)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Giống với cấu trúc câu 43, cụm thành ngữ cố định 'Can't help / Couldn't help + V-ing' có nghĩa là không thể nhịn được/không thể không làm gì. Do đó, động từ 'feel' chuyển đổi thành 'feeling'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B, C, D sai quy tắc kết hợp ngữ pháp bất biến đi sau thành ngữ 'couldn't help'.</div>"
+    },
+    {
+        "question": "By 2025, 70% of American households are predicted ______ at least one AI-powered gadget, like a smart speaker or smart home system.",
+        "options": ["to have", "having", "to had", "to having"],
+        "correctIndex": 0,
+        "explanation": "<div class='exp-section'><strong>Bước 1 - Dịch nghĩa câu hỏi:</strong> Tính đến năm 2025, 70% hộ gia đình Mỹ được dự đoán là sẽ sở hữu ít nhất một thiết bị vận hành bằng trí tuệ nhân tạo (AI), như loa thông minh hoặc hệ thống nhà thông minh.</div><div class='exp-section'><strong>Bước 2 - Phân tích từ vựng/ngữ pháp các đáp án:</strong><br>A. to have (To-V nguyên mẫu)<br>B. having (V-ing)<br>C. to had (Sai cấu trúc, sau to phải là động từ nguyên mẫu)<br>D. to having (To + V-ing)</div><div class='exp-section'><strong>Bước 3 - Giải thích đáp án đúng:</strong> Chọn A. Ta có cấu trúc dự đoán bị động: 'S + be predicted + to-V' (Được dự đoán sẽ làm gì/có cái gì). Vì vậy phương án chuẩn xác nhất là 'to have'.</div><div class='exp-section'><strong>Bước 4 - Giải thích tại sao các đáp án khác sai:</strong> B và D sai dạng động từ. C sai ngữ pháp nghiêm trọng vì dùng phân từ quá khứ 'had' sau 'to'.</div>"
+    }
+];
+
+        let processedQuizData = [];
+
+        // Fisher-Yates Shuffle Algorithm
+        function shuffleArray(array) {
+            let cur = array.length;
+            while (cur !== 0) {
+                let rand = Math.floor(Math.random() * cur); cur--;
+                [array[cur], array[rand]] = [array[rand], array[cur]];
+            }
+            return array;
+        }
+
+        // Initialize quiz structure and mix options layout
+        function initQuiz() {
+            const wrapper = document.getElementById('quiz-wrapper');
+            wrapper.innerHTML = "";
+
+            processedQuizData = rawQuizData.map((item, idx) => {
+                let indexedOpts = item.options.map((opt, oIdx) => ({ text: opt, originalIdx: oIdx }));
+                shuffleArray(indexedOpts);
+                let newCorrectIdx = indexedOpts.findIndex(o => o.originalIdx === item.correctIndex);
+                return {
+                    id: idx + 1,
+                    question: item.question,
+                    options: indexedOpts.map(o => o.text),
+                    correctIndex: newCorrectIdx,
+                    explanation: item.explanation,
+                    userAnswer: null
+                };
+            });
+
+            processedQuizData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = "quiz-card";
+                card.id = `card-${index}`;
+
+                const qText = document.createElement('div');
+                qText.className = "question-text";
+                qText.innerHTML = `<strong>Câu ${index + 1}:</strong> ${item.question}`;
+                card.appendChild(qText);
+
+                const optContainer = document.createElement('div');
+                optContainer.className = "options-container";
+
+                item.options.forEach((optText, optIdx) => {
+                    const btn = document.createElement('button');
+                    btn.className = "option-btn";
+                    const prefix = String.fromCharCode(65 + optIdx);
+                    btn.innerText = `${prefix}. ${optText}`;
+                    btn.onclick = () => selectOption(index, optIdx, btn);
+                    optContainer.appendChild(btn);
+                });
+                card.appendChild(optContainer);
+
+                const expBox = document.createElement('div');
+                expBox.className = "explanation-box";
+                expBox.id = `exp-${index}`;
+                expBox.innerHTML = `
+                    <div class="explanation-title">🔍 GIẢI THÍCH CHI TIẾT TỪ MS LÊ HẰNG:</div>
+                    ${item.explanation}
+                `;
+                card.appendChild(expBox);
+
+                wrapper.appendChild(card);
+            });
+        }
+
+        function selectOption(qIdx, optIdx, clickedBtn) {
+            const qItem = processedQuizData[qIdx];
+            if (qItem.userAnswer !== null) return;
+
+            qItem.userAnswer = optIdx;
+            const card = document.getElementById(`card-${qIdx}`);
+            const buttons = card.querySelectorAll('.option-btn');
+
+            if (optIdx === qItem.correctIndex) {
+                clickedBtn.classList.add('correct');
+                playSound('correct');
+                createConfetti();
+            } else {
+                clickedBtn.classList.add('wrong');
+                buttons[qItem.correctIndex].classList.add('correct');
+                card.classList.add('shake');
+                playSound('wrong');
+            }
+
+            buttons.forEach(b => b.disabled = true);
+            document.getElementById(`exp-${qIdx}`).style.display = "block";
+        }
+
+        function submitQuiz() {
+            let correctCount = 0;
+            let totalCount = processedQuizData.length;
+            let answeredAll = true;
+
+            processedQuizData.forEach((item) => {
+                if (item.userAnswer === null) answeredAll = false;
+                else if (item.userAnswer === item.correctIndex) correctCount++;
+            });
+
+            if (!answeredAll) {
+                alert("Con ơi, hãy hoàn thành thử thách ở tất cả các câu hỏi trước khi nộp bài nhé! 😊");
+                return;
+            }
+
+            const percentage = (correctCount / totalCount) * 100;
+            let commentText = "";
+
+            if (percentage < 50) {
+                commentText = "Điểm lần này chưa cao lắm, con cố gắng đọc kỹ giải thích đáp án và làm lại nha. Cô tin con sẽ làm tốt hơn ở lần sau!.";
+            } else if (percentage >= 60 && percentage <= 80) {
+                commentText = "Con đã có tiến bộ khá ổn rồi, con cố gắng đọc kỹ giải thích đáp án và làm lại nha. Cô tin con sẽ làm tốt hơn ở lần sau!.";
+            } else if (percentage >= 90) {
+                commentText = "Làm tốt lắm, con cố gắng ring điểm 10 ở lần sau nha!.";
+                createConfetti();
+            }
+
+            document.getElementById('modalScoreText').innerText = `${correctCount} / ${totalCount}`;
+            document.getElementById('modalCommentText').innerText = commentText;
+            document.getElementById('scoreModal').style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById('scoreModal').style.display = "none";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            initQuiz();
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
